@@ -11,6 +11,7 @@ public static class RegisterServices
         var connectionString = builder.Configuration
             .GetConnectionString("SqlServerConnectionString");
 
+        builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseInMemoryDatabase("InMem"));
