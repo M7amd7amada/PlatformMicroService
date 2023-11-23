@@ -1,10 +1,10 @@
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 
 using Microsoft.AspNetCore.Mvc;
 
 using PlatformService.Data;
 using PlatformService.Dtos;
+using PlatformService.Models;
 
 namespace PlatformService.Controllers;
 
@@ -25,11 +25,41 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetAll")]
+    [Route("GetAllPlatforms")]
     public ActionResult<IEnumerable<PlatformReadDto>> GetAllPlatforms()
     {
         Console.WriteLine("---> Getting All Platforms");
         var platforms = _repository.GetAllPlatforms();
         return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platforms));
+    }
+
+    [HttpPost]
+    [Route("CreatePlatform")]
+    public ActionResult CreatePlatform(Platform platform)
+    {
+        Console.WriteLine("---> Create Platform");
+        _repository.CreatePlatform(platform);
+        _repository.SaveChanges();
+        return Ok(_mapper.Map<PlatformCreateDto>(platform));
+    }
+
+    [HttpGet]
+    [Route("GetPlatform", Name = "GetPlatform")]
+    public ActionResult<PlatformReadDto> GetPlatformById(int id)
+    {
+        Console.WriteLine($"---> Get Platform {id}");
+        try
+        {
+            var platform = _repository.GetPlatformById(id);
+            return Ok(_mapper.Map<PlatformReadDto>(platform));
+        }
+        catch (ArgumentNullException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception ex)
+        {
+            return Problem(ex.Message);
+        }
     }
 }
