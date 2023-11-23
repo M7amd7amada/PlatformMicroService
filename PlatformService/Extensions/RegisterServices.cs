@@ -13,5 +13,6 @@ public static class RegisterServices
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseInMemoryDatabase("InMem"));
+        builder.Services.AddScoped<IPlatformRepo, PlatformRepo>();
     }
 }
