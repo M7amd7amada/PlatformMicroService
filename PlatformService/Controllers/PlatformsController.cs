@@ -29,22 +29,26 @@ public class PlatformsController : ControllerBase
     public ActionResult<IEnumerable<PlatformReadDto>> GetAllPlatforms()
     {
         Console.WriteLine("---> Getting All Platforms");
-        var platforms = _repository.GetAllPlatforms();
+        IEnumerable<Platform> platforms = _repository.GetAllPlatforms();
         return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(platforms));
     }
 
     [HttpPost]
     [Route("CreatePlatform")]
-    public ActionResult CreatePlatform(Platform platform)
+    public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto platformCreateDto)
     {
-        Console.WriteLine("---> Create Platform");
+        var platform = _mapper.Map<Platform>(platformCreateDto);
         _repository.CreatePlatform(platform);
         _repository.SaveChanges();
-        return Ok(_mapper.Map<PlatformCreateDto>(platform));
+        var platformReadDto = _mapper.Map<PlatformReadDto>(platform);
+        return CreatedAtRoute(
+                nameof(GetPlatformById),
+                new { Id = platformReadDto.Id },
+                platformReadDto);
     }
 
     [HttpGet]
-    [Route("GetPlatform", Name = "GetPlatform")]
+    [Route("GetPlatform", Name = "GetPlatformById")]
     public ActionResult<PlatformReadDto> GetPlatformById(int id)
     {
         Console.WriteLine($"---> Get Platform {id}");
